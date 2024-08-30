@@ -1,0 +1,33 @@
+title: "The Office: Overview"
+execute:
+  echo: false
+author: "Marcin Zinówko"
+format: html
+jupyter: python3
+---
+
+## A Brief Description of *The Office*
+
+*The Office* is an American mockumentary sitcom television series based on the 2001–2003 BBC series of the same name created by (and starring) Ricky Gervais and Stephen Merchant. Adapted for NBC by Greg Daniels, a veteran writer for *Saturday Night Live, King of the Hill,* and *The Simpsons,* the show depicts the everyday work lives of office employees at the Scranton, Pennsylvania, branch of the fictional Dunder Mifflin Paper Company, and aired from March 24, 2005, to May 16, 2013, with a total of nine seasons consisting of 201 episodes.
+
+## Show Logo or Photo
+
+![The Office Logo](Theoffice.png)
+
+## Basic Statistics
+
+Here is a summary of some basic statistics on viewership and ratings:
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Replace this data with the actual data you have
+data = {
+    'Season': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    'First aired, Viewers (millions)': [11.23, 9.0, 9.11, 9.65, 9.34, 8.21, 8.48, 7.64, 4.28]
+}
+
+df = pd.DataFrame(data)
+df_summary
+```
