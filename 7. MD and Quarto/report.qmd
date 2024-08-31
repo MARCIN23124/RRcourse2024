@@ -1,3 +1,4 @@
+---
 title: "The Office: Overview"
 execute:
   echo: false
@@ -6,11 +7,13 @@ format: html
 jupyter: python3
 ---
 
+<div style="text-align: justify">
+
 ## A Brief Description of *The Office*
 
 *The Office* is an American mockumentary sitcom television series based on the 2001–2003 BBC series of the same name created by (and starring) Ricky Gervais and Stephen Merchant. Adapted for NBC by Greg Daniels, a veteran writer for *Saturday Night Live, King of the Hill,* and *The Simpsons,* the show depicts the everyday work lives of office employees at the Scranton, Pennsylvania, branch of the fictional Dunder Mifflin Paper Company, and aired from March 24, 2005, to May 16, 2013, with a total of nine seasons consisting of 201 episodes.
 
-## Show Logo or Photo
+## Show Logo
 
 ![The Office Logo](Theoffice.png)
 
@@ -22,12 +25,41 @@ Here is a summary of some basic statistics on viewership and ratings:
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Replace this data with the actual data you have
 data = {
     'Season': [1, 2, 3, 4, 5, 6, 7, 8, 9],
-    'First aired, Viewers (millions)': [11.23, 9.0, 9.11, 9.65, 9.34, 8.21, 8.48, 7.64, 4.28]
+    'First aired, Viewers (millions)': [11.23, 9.0, 9.11, 9.65, 9.34, 8.21, 8.48, 7.64, 4.28],
+    'Rating Rotten Tomatoes': [7.8, 8.4, 8.4, 7.7, 8.3, 7.3, 7.8, 6.3, 7.2]
 }
-
 df = pd.DataFrame(data)
-df_summary
+df
 ```
+
+
+```{python}
+# Viewership over time
+plt.figure(figsize=(10, 6))
+plt.plot(df['Season'], df['First aired, Viewers (millions)'], marker='o', linestyle='-', color='b')
+plt.title('Viewership Over Time')
+plt.xlabel('Season')
+plt.ylabel('Viewers (millions)')
+plt.grid(True)
+plt.show()
+```
+
+```{python}
+# Viewership from season to season
+viewership_change = df['First aired, Viewers (millions)'].diff().fillna(0)
+
+plt.figure(figsize=(10, 6))
+plt.bar(df['Season'], viewership_change, color='orange', alpha=0.7)
+plt.title('Season-to-Season Changes in Viewership')
+plt.xlabel('Season')
+plt.ylabel('Change in Viewers (millions)')
+plt.grid(axis='y')
+plt.show()
+```
+
+## Observed Changes in Viewership
+Viewership decreased from 11.23 million in Season 1 to 9.0 million by Season 2, dropping 2.23 million. A slight recovery occurred between Seasons 2 and 4, reaching 9.65 million. However, a steady decline followed, with a significant drop of 3.93 million from Season 6 (8.21 million) to Season 9 (4.28 million).
+
+</div> .
