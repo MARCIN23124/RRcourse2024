@@ -1,0 +1,157 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Assignment\"\n",
+        "author: \"Marcin Zinówko\"\n",
+        "date: today\n",
+        "format: html\n",
+        "execute:\n",
+        "  echo: false      \n",
+        "---"
+      ],
+      "id": "9ae58cb6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "tags": [
+          "parameters"
+        ]
+      },
+      "source": [
+        "season_no = 1  # Use Quarto's parameter syntax to define season number"
+      ],
+      "id": "e8817c34",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "import matplotlib.pyplot as plt\n",
+        "import requests\n",
+        "from datetime import date\n",
+        "\n",
+        "# Define the URL for the Wikipedia page of the specific Game of Thrones season\n",
+        "wikipedia_url = f\"https://en.wikipedia.org/wiki/Game_of_Thrones_(season_{season_no})\"\n",
+        "\n",
+        "# Fetch data from Wikipedia\n",
+        "response = requests.get(wikipedia_url)\n",
+        "if response.status_code != 200:\n",
+        "    raise Exception(f\"Failed to fetch data from Wikipedia for season {season_no}. Please check the URL.\")\n",
+        "\n",
+        "# Use pandas to parse the HTML and extract tables\n",
+        "tables = pd.read_html(response.text)\n",
+        "\n",
+        "# Extract the correct table containing the episode data\n",
+        "# The episode data is usually the first table with more than 2 columns and contains 'Title' in the columns\n",
+        "season_data = None\n",
+        "for table in tables:\n",
+        "    if len(table.columns) > 2 and 'Title' in table.columns:\n",
+        "        season_data = table\n",
+        "        break\n",
+        "\n",
+        "if season_data is None:\n",
+        "    raise Exception(f\"Could not find episode data table for season {season_no} on Wikipedia.\")\n",
+        "\n",
+        "# Clean up the data frame\n",
+        "season_data.columns = [col.lower().replace(' ', '_') for col in season_data.columns]  # Normalize column names\n",
+        "season_data['viewers'] = pd.to_numeric(season_data['us_viewers(millions)'], errors='coerce')  # Convert viewers to numeric\n",
+        "\n",
+        "# Calculate summary statistics\n",
+        "episodes_no = len(season_data)\n",
+        "date_start = season_data['original_air_date'].iloc[0]\n",
+        "date_end = season_data['original_air_date'].iloc[-1]\n",
+        "\n",
+        "viewers = season_data['viewers'].mean()\n",
+        "\n",
+        "viewers_start = season_data['viewers'].iloc[0]\n",
+        "viewers_end = season_data['viewers'].iloc[-1]\n",
+        "\n",
+        "max_viewers = season_data['viewers'].max()\n",
+        "top_episode_desc = season_data.loc[season_data['viewers'] == max_viewers, 'title'].values[0]"
+      ],
+      "id": "49d25d00",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Game of Thrones - Season Summary in Numbers\n"
+      ],
+      "id": "49e02557"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print(f\"Season {season_no} of Game of Thrones consisted of {episodes_no} episodes that aired between {date_start} and {date_end} on HBO.\")\n",
+        "print(f\"The show gathered an average of {viewers:.2f} million first-day TV viewers in the US, with the number growing from {viewers_start:.2f} to {viewers_end:.2f} million by the end of the season.\")\n",
+        "print(f'The most popular episode of the season was \"{top_episode_desc}\".')"
+      ],
+      "id": "36eca171",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Viewership Data\n"
+      ],
+      "id": "86d2fd84"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "plt.plot(season_data['viewers'], color='red', linewidth=5)\n",
+        "plt.xlabel(\"Episode number\")\n",
+        "plt.ylabel(\"1st day TV viewers in the US (millions)\")\n",
+        "plt.title(f\"Game of Thrones Season {season_no} Viewership\")\n",
+        "plt.show()"
+      ],
+      "id": "2ad16be1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Episodes with Above-Average Viewership\n"
+      ],
+      "id": "eaf848a5"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "above_average_episodes = season_data[season_data['viewers'] > viewers][['no.', 'title', 'directed_by']]\n",
+        "print(\"Episodes with above-average viewership:\")\n",
+        "print(above_average_episodes)"
+      ],
+      "id": "bae7c77b",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "C:\\Users\\marci\\AppData\\Local\\Programs\\Python\\Python312\\share\\jupyter\\kernels\\python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
